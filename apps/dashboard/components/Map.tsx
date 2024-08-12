@@ -1,7 +1,8 @@
+/* eslint-disable unicorn/prefer-query-selector */
 'use client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Marker as GoogleMapMarker } from '@react-google-maps/api';
 
 import { driversList } from '@/resources/DriversList';
 import { ordersList } from '@/resources/OrdersList';
@@ -20,17 +21,36 @@ const center = {
     lng: 55.2749021,
 };
 
-const fetchOrdersAndDrivers = () => {
+type TOrder = {
+    id: string;
+    position: {
+        lat: number;
+        lng: number;
+    };
+};
+
+type TDriver = {
+    id: string;
+    position: {
+        lat: number;
+        lng: number;
+    };
+};
+
+const fetchOrdersAndDrivers = (): Promise<{ orders: TOrder[]; drivers: TDriver[] }> => {
     return new Promise((resolve) => {
         setTimeout(() => {
-            const updatedOrders = ordersList.map((order) => ({
-                id: order.order_nr,
-                position: { lat: order.delivery_address.lat, lng: order.delivery_address.lng },
+            const updatedOrders: TOrder[] = ordersList.map((order) => ({
+                id: String(order.order_nr),
+                position: { lat: order.delivery_address.lat ?? 0, lng: order.delivery_address.lng ?? 0 },
             }));
 
-            const updatedDrivers = driversList.map((driver) => ({
-                id: driver.id_user,
-                position: { lat: driver.waiting_loc_latitude, lng: driver.waiting_loc_longitude },
+            const updatedDrivers: TDriver[] = driversList.map((driver) => ({
+                id: String(driver.id_user),
+                position: {
+                    lat: driver.waiting_loc_latitude ?? 0,
+                    lng: driver.waiting_loc_longitude ?? 0,
+                },
             }));
 
             resolve({ orders: updatedOrders, drivers: updatedDrivers });
@@ -44,10 +64,10 @@ const Map = () => {
         googleMapsApiKey: 'AIzaSyANWPf72r_A0rSYpmnXJ_1J4MRIhCswK0c',
     });
 
-    const [map, setMap] = useState(null);
-    const [orderMarkers, setOrderMarkers] = useState([]);
-    const [driverMarkers, setDriverMarkers] = useState([]);
-    const element = useRef(null);
+    const [map, setMap] = useState<google.maps.Map | null>(null);
+    const [orderMarkers, setOrderMarkers] = useState<TOrder[]>([]);
+    const [driverMarkers, setDriverMarkers] = useState<TDriver[]>([]);
+    const element = useRef<HTMLElement | null>(null);
 
     useEffect(() => {
         const updateMarkers = () => {
@@ -80,22 +100,21 @@ const Map = () => {
         }
     }, [map, orderMarkers, driverMarkers]);
 
-    const HandleMarkerClick = (id) => {
+    const HandleMarkerClick = (id: string) => {
         const temp = document.getElementById(id);
         if (element.current) {
             element.current.style.border = '';
         }
         if (temp) {
-            // temp.style.border = '1px solid black';
-            element.current = temp;
+            element.current = temp as HTMLElement; // Type assertion for HTMLElement
             element.current.scrollIntoView({ behavior: 'smooth' });
             element.current.focus();
             element.current.style.border = '1px solid black';
         }
     };
 
-    const onLoad = useCallback((map) => {
-        setMap(map);
+    const onLoad = useCallback((mapInstance: google.maps.Map) => {
+        setMap(mapInstance);
     }, []);
 
     const onUnmount = useCallback(() => {
@@ -105,7 +124,7 @@ const Map = () => {
     return isLoaded ? (
         <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={8} onLoad={onLoad} onUnmount={onUnmount}>
             {orderMarkers.map((marker) => (
-                <Marker
+                <GoogleMapMarker
                     onClick={() => HandleMarkerClick(marker.id)}
                     key={marker.id}
                     position={marker.position}
@@ -113,8 +132,8 @@ const Map = () => {
                 />
             ))}
             {driverMarkers.map((marker) => (
-                <Marker
-                    onClick={() => HandleMarkerClick(marker.id.toString())}
+                <GoogleMapMarker
+                    onClick={() => HandleMarkerClick(marker.id)}
                     key={marker.id}
                     position={marker.position}
                     icon="/driver.svg"

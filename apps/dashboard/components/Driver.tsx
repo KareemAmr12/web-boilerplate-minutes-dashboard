@@ -41,15 +41,15 @@ const Driver = ({ driver }: { driver: TDriver }) => {
             <td className={styles.tableDriverStatus}>{driver.driver_status}</td>
             <td className={styles.tableDriverDistance}>
                 {haversine_distance(
-                    driver.order_latitude,
-                    driver.order_longitude,
-                    driver.waiting_loc_latitude,
-                    driver.waiting_loc_longitude,
+                    driver.order_latitude as number,
+                    driver.order_longitude as number,
+                    driver.waiting_loc_latitude as number,
+                    driver.waiting_loc_longitude as number,
                 ).toFixed(2)}{' '}
                 KM
             </td>
             <td className={styles.tableDriverEta}>
-                {format(toZonedTime(driver.eta2, driver.timezone), 'yyyy-MM-dd HH:mm')}
+                {format(toZonedTime(driver.eta2 ?? new Date(), driver.timezone ?? 'UTC'), 'yyyy-MM-dd HH:mm')}
             </td>
         </tr>
     );

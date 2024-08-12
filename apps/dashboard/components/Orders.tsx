@@ -1,12 +1,22 @@
+/* eslint-disable css-modules/no-undef-class */
 'use client';
 import { useEffect, useReducer } from 'react';
 
-import { ordersList } from '@/resources/OrdersList';
+import { ordersList, TOrder } from '@/resources/OrdersList';
 
 import Order from './Order';
 import styles from './Orders.module.scss';
 
-function fetchData() {
+type TState = {
+    orders: TOrder[];
+};
+
+type TAction =
+    | { type: 'SET_ORDERS'; payload: TOrder[] }
+    | { type: 'ADD_ORDER'; payload: TOrder }
+    | { type: 'REMOVE_ORDER'; payload: string };
+
+function fetchData(): Promise<TOrder[]> {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             const data = ordersList;
@@ -20,16 +30,16 @@ function fetchData() {
     });
 }
 
-function reducer(state, action) {
+function reducer(state: TState, action: TAction): TState {
     switch (action.type) {
         case 'SET_ORDERS':
             return { ...state, orders: action.payload };
         case 'ADD_ORDER':
             return { ...state, orders: [...state.orders, action.payload] };
         case 'REMOVE_ORDER':
-            return { ...state, orders: state.orders.filter((order) => order.id !== action.payload) };
+            return { ...state, orders: state.orders.filter((order) => order.order_nr !== action.payload) };
         default:
-            throw new Error(`Unhandled action type: ${action.type}`);
+            throw new Error(`Unhandled action type`);
     }
 }
 
@@ -47,6 +57,7 @@ const Orders = () => {
                     console.error(error);
                 });
         };
+
         updateOrders();
 
         const intervalId = setInterval(updateOrders, 60000);
