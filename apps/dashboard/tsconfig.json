@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@core/*": [
+        "core/*"
+      ],
+      "@/*": [
+        "apps/dashboard/*"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "app/**/*",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
+}

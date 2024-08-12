@@ -1,0 +1,46 @@
+@mixin commonTD {
+    overflow-wrap: break-word;
+    width: 25%;
+    margin: 12px;
+    text-align: left;
+}
+
+.tr {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid rgb(128 128 128 / 20%);
+    justify-content: left;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+
+    .td {
+        @include commonTD;
+    }
+}
+
+.selectedTr {
+    border: 1px solid black;
+}
+
+.tableDriverVehicle {
+    @include commonTD;
+}
+
+.tableDriverName {
+    @include commonTD;
+
+    color: blue;
+}
+
+.tableDriverStatus {
+    @include commonTD;
+}
+
+.tableDriverDistance {
+    @include commonTD;
+}
+
+.tableDriverEta {
+    @include commonTD;
+}

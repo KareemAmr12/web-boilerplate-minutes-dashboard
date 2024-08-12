@@ -1,0 +1,11 @@
+{
+  "name": "@web-boilerplate-v4/dashboard",
+  "private": true,
+  "version": "4.0.0",
+  "scripts": {
+    "dev": "   PORT=443 _APP=dashboard    next dev  --experimental-https",
+    "lint": "                          next lint --no-cache",
+    "build": " _APP=dashboard             next build",
+    "start": "                         next start"
+  }
+}

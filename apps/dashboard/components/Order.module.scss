@@ -1,0 +1,19 @@
+@import './Driver.module';
+
+.tableOrderNumber {
+    @include commonTD;
+
+    color: rgb(0 0 255 / 80%);
+}
+
+.tableOrderPackage {
+    @include commonTD;
+}
+
+.tableOrderStatus {
+    @include commonTD;
+}
+
+.tableOrderEta {
+    @include commonTD;
+}
